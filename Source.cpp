@@ -101,7 +101,7 @@ int t = 0;
 int g = 0;
 int main()
 {
-	//Временные штуки 
+	//Р’СЂРµРјРµРЅРЅС‹Рµ С€С‚СѓРєРё 
 	chrono::time_point<chrono::system_clock> start, end;
 	time_t end_time = chrono::system_clock::to_time_t(end);
 	////////////////
@@ -133,8 +133,8 @@ int main()
 		global_step(iter);
 		static int tmptmp[100] = { 0 };
 		int tmp = 0;
-		tmptmp[tmp] = { 0 };
-		for (int i = 0; i < B[iter].size(); i++) {  //Пересечение одного шаблона
+		tmptmp[tmp] =  0 ;
+		for (int i = 0; i < B[iter].size(); i++) {  //РџРµСЂРµСЃРµС‡РµРЅРёРµ РѕРґРЅРѕРіРѕ С€Р°Р±Р»РѕРЅР°
 			g = intersect(B[iter][i].b, B[iter][i].b);
 			tmptmp[g]++;
 		}
