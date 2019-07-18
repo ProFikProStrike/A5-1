@@ -85,6 +85,7 @@ void global_step(int i) {
 
 		if (B[i - 1][k].b[2][T - 1] == 2)
 			x2 = 2;
+
 		for (int vx1 = 0; vx1 <= 1; vx1++) {
 			for (int vx2 = 0; vx2 <= 1; vx2++) {
 				B[i - 1][k].b[x1][T - 1] = vx1;
@@ -99,6 +100,7 @@ void global_step(int i) {
 
 int t = 0;
 int g = 0;
+
 int main()
 {
 	//Временные штуки 
@@ -116,6 +118,7 @@ int main()
 	};
 
 	templ tt[6];
+
 	for (int i = 0; i < 6; i++) {
 		for (int k = 0; k < 3; k++) {
 			tt[i].b[k][T - 1] = a[i][k][2];
@@ -131,24 +134,23 @@ int main()
 	//Global Iteration
 	for (int iter = 1; iter < 5; iter++) {
 		global_step(iter);
+
 		static int tmptmp[100] = { 0 };
 		int tmp = 0;
-		tmptmp[tmp] = { 0 };
-		for (int i = 0; i < 100; i++) { 
-			tmptmp[i] =  0 ; 
-		}
+
+		//for (int i = 0; i < 100; i++) { 
+		//	tmptmp[i] =  0 ; 
+		//}
 
 		for (int i = 0; i < B[iter].size(); i++) {  
 			g = intersect(B[iter][i].b, B[iter][i].b);
 			tmptmp[g]++;
 		}
 		
-
 		printf("SIZE B[%d] = %d\n", iter, B[iter].size());
 
 		static int pairs[100];
 	
-		
 		int c;
 		c = 0;
 
@@ -157,8 +159,6 @@ int main()
 
 		start = chrono::system_clock::now(); 
 		for (int n = 2; n < 100; n++) {
-			int tmp = 0;
-			tmptmp[tmp] = { 0 };
 			printf("Iter: %d\t\tn: %d\t\tIntersection:\n", iter, n);
 			for (int i = 0; i < n; i++)
 				ones[i] = 1;
@@ -194,15 +194,16 @@ int main()
 			if (check == 0)
 				break;
 		}
+
 		end = chrono::system_clock::now();
 		int elapsed_seconds = chrono::duration_cast<chrono::seconds>(end - start).count();
 		cout << "Time: " << elapsed_seconds << "s\n";
+
 		printf("Intersection: \n");
 		for (int i = 1; i < 64; i++) {
 			if (tmptmp[i] != 0) 
 				cout << tmptmp[i] << " * " << "2^" << 64 - i << endl;
 		}
-
 	}
 	scanf("\n");
 	return 0;
