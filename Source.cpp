@@ -133,8 +133,12 @@ int main()
 		global_step(iter);
 		static int tmptmp[100] = { 0 };
 		int tmp = 0;
-		tmptmp[tmp] =  0 ;
-		for (int i = 0; i < B[iter].size(); i++) {  //Пересечение одного шаблона
+		tmptmp[tmp] = { 0 };
+		for (int i = 0; i < 100; i++) { 
+			tmptmp[i] =  0 ; 
+		}
+
+		for (int i = 0; i < B[iter].size(); i++) {  
 			g = intersect(B[iter][i].b, B[iter][i].b);
 			tmptmp[g]++;
 		}
