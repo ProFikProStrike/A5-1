@@ -6,9 +6,11 @@
 #include <string>
 #include <chrono>
 #include <ctime>
-#define T 4
+#define T 8
 
 using namespace std;
+
+int pi[1024*16][1024*16];
 
 struct templ {
 	int b[3][T];
@@ -55,7 +57,7 @@ int intersectN(int n, int *a, int globaliteration) {
 	int c;
 	c = 0;
 	for (int i = 0; i < 3; i++) {
-		for (int j = T - 1; j > (T - 3 - globaliteration); j--) {//(T - 3 - globaliteration)
+		for (int j = T - 1; j >=0; j--) {//(T - 3 - globaliteration)
 			int flag0 = 0;
 			int flag1 = 0;
 			for (int k = 0; k < n; k++) {
@@ -68,7 +70,7 @@ int intersectN(int n, int *a, int globaliteration) {
 				c += 1;
 		}
 	}
-	return (3 * T - c);
+	return (3 *T - c);
 }
 
 void global_step(int i) {
@@ -117,10 +119,17 @@ int main()
 	{ { 2,1,2 },{ 2,1,2 },{ 2,0,1 } },
 	};
 
+
 	templ tt[6];
 
+
+	static int ssh[3] = { 8,10,10 };
 	for (int i = 0; i < 6; i++) {
+		//printf("{ vector< long long> v;\n");
 		for (int k = 0; k < 3; k++) {
+			//if (a[i][k][0] != 2) printf("\tv.push_back( %cLR%d(%d) );\n", a[i][k][0] == 1 ? '-' : ' ', k + 1, ssh[k] + 2);
+			//if (a[i][k][1] != 2) printf("\tv.push_back( %cLR%d(%d) );\n", a[i][k][1] == 1 ? '-' : ' ', k + 1, ssh[k] + 1);
+			//if (a[i][k][2] != 2) printf("\tv.push_back( %cLR%d(%d) );\n", a[i][k][2] == 1 ? '-' : ' ', k + 1, ssh[k] + 0);
 			tt[i].b[k][T - 1] = a[i][k][2];
 			tt[i].b[k][T - 2] = a[i][k][1];
 			tt[i].b[k][T - 3] = a[i][k][0];
@@ -128,6 +137,7 @@ int main()
 				tt[i].b[k][j] = 2;
 			}
 		}
+		//printf("addclause.push_back(v);\n}\n");
 		B[0].push_back(tt[i]);
 	}
 
@@ -138,16 +148,16 @@ int main()
 		static int tmptmp[100] = { 0 };
 		int tmp = 0;
 
-		//for (int i = 0; i < 100; i++) { 
-		//	tmptmp[i] =  0 ; 
-		//}
+		for (int i = 0; i < 100; i++) { 
+			tmptmp[i] =  0 ; 
+		}
 
 		for (int i = 0; i < B[iter].size(); i++) {  
 			g = intersect(B[iter][i].b, B[iter][i].b);
 			tmptmp[g]++;
 		}
 		
-		printf("SIZE B[%d] = %d\n", iter, B[iter].size());
+		printf("\nSIZE B[%d] = %d\n", iter, B[iter].size());
 
 		static int pairs[100];
 	
@@ -158,12 +168,19 @@ int main()
 		ones = (int*)malloc(B[iter].size() * sizeof(int));
 
 		start = chrono::system_clock::now(); 
+
+		for (int i = 0; i < 16*1024; i++)
+			for (int j = 0; j < 16*1024; j++)
+				pi[i][j] = 0;
+
 		for (int n = 2; n < 100; n++) {
+			tmp = 0;
 			printf("Iter: %d\t\tn: %d\t\tIntersection:\n", iter, n);
 			for (int i = 0; i < n; i++)
 				ones[i] = 1;
 			for (int j = n; j < B[iter].size(); j++)
 				ones[j] = 0;
+			
 
 			int check = 0;
 			int perm_n = 0;
@@ -177,13 +194,21 @@ int main()
 					}
 				perm_n++;
 
-				if (iter == 2 && perm_n % 1000000 == 0) 
-					printf("\t\t%d  --   %d %d (%d)\n", iter, n, perm_n, check);
+				//if (iter == 2 && perm_n % 1000000 == 0) 
+				//	printf("\t\t%d  --   %d %d (%d)\n", iter, n, perm_n, check);
 
-				tmp = intersectN(n, pairs, iter);
+				if (n == 2 || (pi[pairs[0]][pairs[1]] == 1 && pi[pairs[0]][pairs[2]] == 1 && pi[pairs[1]][pairs[2]] == 1)) {
+					if( n<=3 || (pi[pairs[0]][pairs[3]] == 1 && pi[pairs[1]][pairs[3]] == 1 && pi[pairs[2]][pairs[3]] == 1  ) )
+						tmp = intersectN(n, pairs, iter);
+				}
+				else
+					tmp = 0;
 
-				if (tmp != 0)
+				if (tmp != 0) {
 					check++;
+					if( n == 2 )
+						pi[pairs[0]][pairs[1]] = 1;
+				}
 
 				if (n % 2 == 0)
 					tmptmp[tmp]--;
@@ -200,10 +225,13 @@ int main()
 		cout << "Time: " << elapsed_seconds << "s\n";
 
 		printf("Intersection: \n");
+		double tmpsum = 0;
 		for (int i = 1; i < 64; i++) {
 			if (tmptmp[i] != 0) 
 				cout << tmptmp[i] << " * " << "2^" << 64 - i << endl;
+			tmpsum += tmptmp[i] * pow(2.0, 64 - i);
 		}
+		cout << "TMPSUM : " << tmpsum << " LOG: " << log2(tmpsum);
 	}
 	scanf("\n");
 	return 0;
